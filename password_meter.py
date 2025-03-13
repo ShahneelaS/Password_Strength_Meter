@@ -2,7 +2,6 @@ import re
 import random
 import string
 import streamlit as st
-import pyperclip
 
 # ✅ Function to check password strength
 def check_password_strength(password):
@@ -57,105 +56,51 @@ def generate_passphrase(num_words=4):
 def main():
     st.set_page_config(page_title="Password Strength Meter", layout="centered")
 
-    # ✅ Custom CSS for Sidebar & UI Fixes
+    # ✅ Apply Custom CSS
     st.markdown("""
-       <style>
-    /* ✅ Sidebar - Light Greyish-Blue Background */
-    [data-testid="stSidebar"] {
-        background-color: #CFD8DC !important;
-        color: black !important;
-    }
-    [data-testid="stSidebarNav"] div {
-        color: black !important;
-        font-size: 18px !important;
-        font-weight: bold;
-    }
-
-    /* ✅ Sidebar Heading */
-    [data-testid="stSidebarNav"]::before {
-        content: "🔹 Menu";
-        display: block;
-        font-size: 20px;
-        font-weight: bold;
-        color: black;
-        padding: 10px;
-        text-align: center;
-    }
-
-    /* ✅ Header - Light Greyish-Blue Background */
-    header[data-testid="stHeader"] {
-        background-color: #CFD8DC;
-        padding: 10px;
-        border-radius: 5px;
-    }
-    header[data-testid="stHeader"] h1 {
-        color: black !important;
-        text-align: center;
-    }
-
-    /* ✅ Center App - Gradient Background */
-    .stApp {
-        background: linear-gradient(135deg, #546E7A, #90A4AE);
-        color: white;
-    }
-
-    /* ✅ Input Fields */
-    .stTextInput label, .stButton button, .stSlider label {
-        color: white !important;
-    }
-    .stTextInput input {
-        background-color: #546E7A;
-        color: white;
-        border: 1px solid #90A4AE;
-    }
-
-    /* ✅ Buttons - Soft Blue with a darker hover effect (No Change) */
-    .stButton button {
-        background-color: #607D8B;  /* Soft Blue */
-        color: white;
-        border-radius: 8px;
-        padding: 8px 15px;
-        font-weight: bold;
-        transition: background-color 0.3s ease-in-out;
-    }
-    .stButton button:hover {
-        background-color: #455A64;  /* Darker Blue */
-    }
-
-    /* ✅ Error/Warning Messages - Deep Red */
-    .stError {
-        background-color: #B71C1C;  /* Deep Red */
-        color: white !important;
-        padding: 10px;
-        border-radius: 5px;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    /* ✅ Success Messages - Royal Blue (No Green) */
-    .stSuccess {
-        background-color: #1976D2;  /* Royal Blue */
-        color: white !important;
-        padding: 10px;
-        border-radius: 5px;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    /* ✅ Copied Successfully Alert - Dark Navy Blue */
-    .stClipboardSuccess, .stPasswordCopied {
-        background-color: #0D47A1;  /* Dark Navy Blue */
-        color: white !important;
-        padding: 10px;
-        border-radius: 5px;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 10px;
-    }
-</style>
-
+        <style>
+            .stApp {
+                background: linear-gradient(135deg, #546E7A, #90A4AE) !important;
+                color: white !important;
+            }
+            [data-testid="stSidebar"] {
+                background-color: #CFD8DC !important;
+            }
+            [data-testid="stSidebarNav"] div {
+                color: black !important;
+                font-size: 18px !important;
+                font-weight: bold;
+            }
+            [data-testid="stSidebarNav"]::before {
+                content: "🔹 Menu";
+                display: block;
+                font-size: 20px;
+                font-weight: bold;
+                color: black;
+                padding: 10px;
+                text-align: center;
+            }
+            header[data-testid="stHeader"] {
+                background-color: #CFD8DC;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            header[data-testid="stHeader"] h1 {
+                color: black !important;
+                text-align: center;
+            }
+            .stButton button {
+                background-color: #607D8B;
+                color: white;
+                border-radius: 8px;
+                padding: 8px 15px;
+                font-weight: bold;
+                transition: background-color 0.3s ease-in-out;
+            }
+            .stButton button:hover {
+                background-color: #455A64;
+            }
+        </style>
     """, unsafe_allow_html=True)
 
     # ✅ Sidebar Menu
@@ -169,7 +114,7 @@ def main():
         if st.button("Check Strength"):
             if password:
                 feedback, score = check_password_strength(password)
-                st.markdown(f"<div class='stSuccess'>{feedback}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background-color:#1976D2; padding:10px; border-radius:5px; color:white; text-align:center; font-weight:bold;'>{feedback}</div>", unsafe_allow_html=True)
                 st.progress(score / 4)
 
     elif menu == "Generate Password":
@@ -181,15 +126,8 @@ def main():
             st.session_state.generated_password = strong_password
 
         if "generated_password" in st.session_state:
-            st.markdown(f"<div class='stSuccess'>🔑 Suggested Strong Password: `{st.session_state.generated_password}`</div>", unsafe_allow_html=True)
-
-            # ✅ Copy Button
-            if st.button("Copy to Clipboard"):
-                pyperclip.copy(st.session_state.generated_password)
-                st.session_state.copied = True
-
-            if st.session_state.get("copied", False):
-                st.success("✅ Password copied successfully!")
+            st.text_input("Copy the password manually:", value=st.session_state.generated_password)
+            st.success("✅ You can copy the password from the text box above!")
 
     elif menu == "Generate Passphrase":
         st.subheader("🔑 Generate a Secure Passphrase")
@@ -200,15 +138,8 @@ def main():
             st.session_state.generated_passphrase = passphrase
 
         if "generated_passphrase" in st.session_state:
-            st.markdown(f"<div class='stSuccess'>🔑 Secure Passphrase: `{st.session_state.generated_passphrase}`</div>", unsafe_allow_html=True)
-
-            # ✅ Copy Button
-            if st.button("Copy Passphrase"):
-                pyperclip.copy(st.session_state.generated_passphrase)
-                st.session_state.copied_phrase = True
-
-            if st.session_state.get("copied_phrase", False):
-                st.success("✅ Passphrase copied successfully!")
+            st.text_input("Copy the passphrase manually:", value=st.session_state.generated_passphrase)
+            st.success("✅ You can copy the passphrase from the text box above!")
 
 if __name__ == "__main__":
     main()
